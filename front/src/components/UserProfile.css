@@ -1,0 +1,118 @@
+/* src/components/UserProfile.css */
+
+.user-profile {
+    font-family: Arial, sans-serif;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+  }
+  
+  /* Header styles */
+  header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 0;
+    border-bottom: 1px solid #e0e0e0;
+  }
+  
+  .logo {
+    font-size: 24px;
+    font-weight: bold;
+    color: #4285f4;
+  }
+  
+  nav ul {
+    display: flex;
+    list-style-type: none;
+    padding: 0;
+  }
+  
+  nav ul li {
+    margin: 0 15px;
+  }
+  
+  nav ul li a {
+    text-decoration: none;
+    color: #333;
+  }
+  
+  /* Make the Job Trends button blue */
+  nav ul li a.job-trends {
+    color: white;
+    background-color: #4285f4;
+    padding: 8px 16px;
+    border-radius: 4px;
+  }
+  
+  .auth-buttons button {
+    margin-left: 10px;
+    padding: 8px 16px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  
+  .auth-buttons button:first-child {
+    background-color: white;
+    color: #4285f4;
+    border: 1px solid #4285f4;
+    transition: background-color 0.3s ease, color 0.3s ease; /* Smooth transition */
+}
+
+.auth-buttons button:first-child:hover {
+    background-color: #4285f4; /* Change background to blue */
+    color: white; /* Change text color to white */
+}
+
+  .auth-buttons button:last-child {
+    background-color: #4285f4;
+    color: white;
+  }
+  
+  /* Profile info styles */
+  .profile-info {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 50px;
+  }
+  
+  .profile-image {
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-bottom: 20px;
+  }
+  
+  .profile-info h1 {
+    font-size: 24px;
+    margin-bottom: 5px;
+  }
+  
+  .profile-info p {
+    margin: 5px 0;
+    color: #666;
+  }
+  
+  .profile-actions {
+    margin-top: 20px;
+  }
+  
+  .profile-actions a {
+    margin: 0 10px;
+    text-decoration: none;
+    color: #4285f4;
+    padding: 8px 16px;
+    border-radius: 4px;
+    border: 1px solid transparent;
+    transition: background-color 0.3s, color 0.3s;
+  }
+  
+  .profile-actions a:hover {
+    background-color: #4285f4;
+    color: white;
+    border: 1px solid #4285f4;
+  }
+  

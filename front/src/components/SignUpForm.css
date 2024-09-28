@@ -1,0 +1,107 @@
+.signup-container {
+  display: flex;
+  height: 100vh;
+  font-family: 'Poppins', sans-serif;
+}
+
+.image-section {
+  flex: 2.75;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #ccd6f6, #f0f4f8);
+  overflow: hidden; /* Ensures no overflow */
+  position: relative; /* For positioning the image absolutely */
+}
+
+.logo-img {
+  width: 100%;  /* Make the image cover the entire width */
+  height: 100%; /* Make the image cover the entire height */
+  object-fit: cover; /* Ensures the image covers the area while maintaining its aspect ratio */
+  position: absolute; /* Positions the image relative to the parent */
+  top: 0;
+  left: 0;
+}
+
+.form-section {
+  flex: 1;
+  padding: 3rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  background: white;
+  box-shadow: 0px 10px 30px rgba(0, 0, 0, 0.1);
+  border-radius: 15px;
+}
+
+.form-section h2 {
+  font-size: 2rem;
+  font-weight: bold;
+  margin-bottom: 1rem;
+  color: #333;
+  margin-left: -1rem; /* Adjust this value for desired spacing */
+  padding-left: 1rem;  /* Optional: creates some space between the text and the edge */
+  margin-bottom: -10px;
+}
+
+.form-section p {
+  margin-bottom: 2rem;
+  color: #666;
+  font-size: 1rem;
+  margin-left: -5rem; /* Align the paragraph with the heading */
+  padding-left: 5rem;  
+}
+
+.form-section form {
+  display: flex;
+  flex-direction: column;
+}
+
+.form-section input[type="text"],
+.form-section input[type="email"],
+.form-section input[type="password"] {
+  padding: 1rem;
+  margin-bottom: 1.5rem;
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  font-size: 1rem;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.05);
+}
+
+.form-section input[type="checkbox"] {
+  margin-right: 0.5rem;
+}
+
+.remember-me {
+  display: flex;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  color: #333;
+}
+
+.form-section button {
+  padding: 1rem;
+  border: none;
+  border-radius: 10px;
+  background-color: #007bff;
+  color: white;
+  font-size: 1.2rem;
+  font-weight: bold;
+  cursor: pointer;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+  transition: background-color 0.3s ease;
+}
+
+.form-section button:hover {
+  background-color: #0056b3;
+}
+
+.form-section a {
+  color: #007bff;
+  text-decoration: none;
+  font-size: 0.9rem;
+}
+
+.form-section a:hover {
+  text-decoration: underline;
+}
