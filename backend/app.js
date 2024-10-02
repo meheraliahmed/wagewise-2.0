@@ -170,6 +170,32 @@ app.post('/verify-password', async (req, res) => {
   }
 });
 
+app.post('/create-thread', async (req, res) => {
+  const { email, title, content } = req.body;
+  try {
+    // Find the user by their email
+    const user = await User.findOne({ email });
+
+    if (!user) {
+      return res.status(404).send({ message: 'User not found' });
+    }
+
+    // Create the thread object
+    const newThread = { title, content };
+
+    // Add the thread to the user's threads array
+    user.threads.push(newThread);
+
+    // Save the user document
+    await user.save();
+
+    res.send({ message: 'Thread created successfully', thread: newThread });
+  } catch (error) {
+    res.status(500).send({ message: 'Error creating thread', error });
+  }
+});
+
+
 
 app.post('/change-password', async (req, res) => {
   const { email, newPassword } = req.body;

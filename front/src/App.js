@@ -7,6 +7,7 @@ import UserProfile from './components/UserProfile';
 import QuestionnaireForm from './components/QuestionnaireForm'; // Import Questionnaire form
 import ChangePassword from './components/changepass';
 import SalaryCalculator from './components/salarycal'; 
+import Community from './components/Community';
 
 
 function App() {
@@ -16,7 +17,7 @@ function App() {
         <Routes>
         <Route path="/Profile" element={<UserProfile />} />
         <Route path="/" element={<LoginForm />} />
-         
+        <Route path="/community" element={<Community />}/>
         <Route path="/salary-calculator" element={<SalaryCalculator />}/>
           <Route path="/signup" element={<SignUpForm />} />
           <Route path="/questionnaire" element={<QuestionnaireForm />} /> {/* Add this route */}

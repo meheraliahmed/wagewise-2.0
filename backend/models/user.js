@@ -26,7 +26,10 @@ const jobSchema = new mongoose.Schema({
 const skillSchema = new mongoose.Schema({
   skillName: String
 });
-
+const threadSchema = new mongoose.Schema({
+  content: String,
+  createdAt: { type: Date, default: Date.now }
+});
 const userSchema = new mongoose.Schema({
   fullName: String,
   email: { type: String, unique: true },
@@ -35,7 +38,8 @@ const userSchema = new mongoose.Schema({
   personalInfo: personalInfoSchema,  // Embedded personal information
   education: [educationSchema],  // Array of education records
   job: [jobSchema],  // Array of job records
-  skills: [skillSchema] // Array of skills
+  skills: [skillSchema], // Array of skills
+  threads: [threadSchema]
 });
 
 const User = mongoose.model('User', userSchema, 'users');

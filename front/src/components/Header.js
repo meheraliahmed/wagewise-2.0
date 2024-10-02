@@ -8,9 +8,9 @@ function Header() {
       <div className="logo">Wage Wise</div>
       <nav>
         <ul>
-          <li><Link to="/community">Community</Link></li> {/* Replace href with Link */}
-          <li><Link to="/salary-calculator">Calculate Salary</Link></li> {/* Updated this line */}
-          <li><Link to="/job-trends">Job Trends</Link></li> {/* Replace href with Link */}
+        <li><Link to="/community">Community</Link></li>
+          <li><Link to="/salary-calculator">Calculate Salary</Link></li> 
+          <li><Link to="/job-trends">Job Trends</Link></li>
         </ul>
       </nav>
     </header>
