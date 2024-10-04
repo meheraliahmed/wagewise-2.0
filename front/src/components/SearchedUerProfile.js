@@ -7,6 +7,7 @@ const SearchedUserProfile = () => {
     console.log('Email from URL:', email); // Log the email prop
     const [threads, setThreads] = useState([]);
     const [error, setError] = useState(null);
+    const [isFollowing, setIsFollowing] = useState(false); // State to track follow status
 
     useEffect(() => {
         if (!email) {
@@ -28,6 +29,18 @@ const SearchedUserProfile = () => {
         fetchUserThreads();
     }, [email]);
 
+    const handleFollowUser = async () => {
+        try {
+            // Assuming you have an endpoint to handle following a user
+            const response = await axios.post(`http://localhost:3001/follow-user`, { email });
+            console.log('Follow response:', response.data);
+            setIsFollowing(true); // Update follow status
+        } catch (error) {
+            console.error('Error following user:', error);
+            setError('Failed to follow user.');
+        }
+    };
+
     return (
         <div>
             <h2>User Threads</h2>
@@ -42,6 +55,9 @@ const SearchedUserProfile = () => {
             ) : (
                 <p>No threads found for this user.</p>
             )}
+            <button onClick={handleFollowUser} disabled={isFollowing}>
+                {isFollowing ? 'Following' : 'Follow User'}
+            </button>
         </div>
     );
 };
