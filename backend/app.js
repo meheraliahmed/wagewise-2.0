@@ -172,6 +172,18 @@ app.put('/update-profile', async (req, res) => {
     res.status(500).json({ error: 'Error updating profile' });
   }
 });
+app.get('/user/:email', async (req, res) => {
+  try {
+    const user = await User.findOne({ email: req.params.email }).populate('friends');
+    if (!user) {
+      return res.status(404).send('User not found');
+    }
+    res.status(200).json(user);
+  } catch (error) {
+    console.error('Error fetching user data:', error);
+    res.status(500).send('Internal Server Error');
+  }
+});
 app.get('/user-threads/:email', async (req, res) => {
   try {
     const { email } = req.params; // Get email from request parameters
@@ -188,6 +200,93 @@ app.get('/user-threads/:email', async (req, res) => {
     res.status(500).json({ message: 'Failed to fetch threads', error: error.message }); // Send error response
   }
 });
+
+app.get('/check-friend-status/:email', async (req, res) => {
+  const { email } = req.params;
+  try {
+      // Assume you have a method to find the user by email
+      const user = await User.findOne({ 'personalInfo.email': email }).populate('friends');
+      if (!user) return res.status(404).send({ error: 'User not found' });
+
+      // Check if the current user (you can get the current user from the session or token) is in the friends list
+      const currentUserEmail = req.user.email; // This should come from your authentication
+      const currentUser = await User.findOne({ 'personalInfo.email': currentUserEmail });
+      const isFriend = currentUser.friends.includes(user._id);
+
+      res.send({ isFriend });
+  } catch (error) {
+      console.error('Error checking friend status:', error);
+      res.status(500).send({ error: 'Internal Server Error' });
+  }
+});
+
+app.post('/toggle-friend', async (req, res) => {
+  const { userEmail, friendEmail } = req.body;
+
+  // Check if userEmail and friendEmail are provided
+  if (!userEmail || !friendEmail) {
+    return res.status(400).send('User email and friend email must be provided');
+  }
+
+  try {
+    // Find both users
+    const user = await User.findOne({ email: userEmail });
+    const friend = await User.findOne({ email: friendEmail });
+
+    if (!user || !friend) {
+      return res.status(404).send('User or Friend not found');
+    }
+
+    // Check if they are already friends
+    const isFriend = user.friends.includes(friend._id);
+
+    if (isFriend) {
+      // If they are friends, remove the friend
+      user.friends.pull(friend._id);
+      friend.friends.pull(user._id); // Optional: to keep friendship mutual
+      await user.save();
+      await friend.save();
+      return res.send('Friend removed');
+    } else {
+      // If not friends, add the friend
+      user.friends.push(friend._id);
+      friend.friends.push(user._id); // Optional: to keep friendship mutual
+      await user.save();
+      await friend.save();
+      return res.send('Friend added');
+    }
+  } catch (error) {
+    console.error('Error toggling friend status:', error);
+    return res.status(500).send('Internal Server Error');
+  }
+});
+
+
+
+app.get('/check-friend-status/:email', async (req, res) => {
+  try {
+      const { email } = req.params;
+
+      // Find the logged-in user using their email
+      const user = await User.findOne({ email: req.user.email }); // Make sure req.user.email is the logged-in user's email
+      const friend = await User.findOne({ email }); // Find the friend using the provided email
+
+      if (!user || !friend) {
+          return res.status(404).send('User or Friend not found');
+      }
+
+      // Check if the friend ID exists in the user's friend list
+      const isFriend = user.friends.includes(friend._id);
+
+      res.status(200).json({ isFriend });
+  } catch (error) {
+      console.error('Error checking friend status:', error);
+      res.status(500).send('Internal Server Error');
+  }
+});
+
+
+
 app.post('/verify-password', async (req, res) => {
   const { email, currentPassword } = req.body;
   

@@ -39,7 +39,8 @@ const userSchema = new mongoose.Schema({
   education: [educationSchema],  // Array of education records
   job: [jobSchema],  // Array of job records
   skills: [skillSchema], // Array of skills
-  threads: [threadSchema]
+  threads: [threadSchema],
+  friends: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }] // Add this line
 });
 
 const User = mongoose.model('User', userSchema, 'users');
