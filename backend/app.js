@@ -123,6 +123,23 @@ app.post('/add-info', async (req, res) => {
     res.status(500).send('Error adding information');
   }
 });
+app.get('/search-users', async (req, res) => {
+  const { name } = req.query;
+  console.log(`Searching for users with name: ${name}`); // Log the name for debugging
+
+  try {
+    const users = await User.find({ 'personalInfo.name': new RegExp(name, 'i') });
+    
+    if (users.length === 0) {
+      return res.status(404).send({ message: 'No users found' });
+    }
+
+    res.status(200).send(users);
+  } catch (error) {
+    console.error('Error searching users:', error);
+    res.status(500).send({ message: 'Error searching users', error });
+  }
+});
 
 
 app.get('/user-profile', async (req, res) => {
@@ -155,7 +172,22 @@ app.put('/update-profile', async (req, res) => {
     res.status(500).json({ error: 'Error updating profile' });
   }
 });
+app.get('/user-threads/:email', async (req, res) => {
+  try {
+    const { email } = req.params; // Get email from request parameters
+    const user = await User.findOne({ email }); // Find the user by email
 
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' }); // Handle case where user does not exist
+    }
+
+    console.log('Fetched user:', user); // Log the fetched user
+    res.status(200).json(user.threads); // Return the user's threads
+  } catch (error) {
+    console.error('Error fetching user threads:', error); // Log the error
+    res.status(500).json({ message: 'Failed to fetch threads', error: error.message }); // Send error response
+  }
+});
 app.post('/verify-password', async (req, res) => {
   const { email, currentPassword } = req.body;
   

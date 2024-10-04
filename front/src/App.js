@@ -8,6 +8,7 @@ import QuestionnaireForm from './components/QuestionnaireForm'; // Import Questi
 import ChangePassword from './components/changepass';
 import SalaryCalculator from './components/salarycal'; 
 import Community from './components/Community';
+import SearchedUserProfile from './components/SearchedUerProfile';
 
 
 function App() {
@@ -22,6 +23,7 @@ function App() {
           <Route path="/signup" element={<SignUpForm />} />
           <Route path="/questionnaire" element={<QuestionnaireForm />} /> {/* Add this route */}
           <Route path="/change-password" element={<ChangePassword />} />
+          <Route path="/user-profile/:email" element={<SearchedUserProfile />} />
         </Routes>
       </div>
     </Router>
