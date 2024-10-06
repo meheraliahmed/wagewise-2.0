@@ -327,6 +327,97 @@ app.post('/create-thread', async (req, res) => {
 });
 
 
+app.post('/like-thread', async (req, res) => {
+  const { threadId, email, loggedInUserEmail } = req.body;
+
+  // Validate required fields
+  if (!threadId || !email || !loggedInUserEmail) {
+      return res.status(400).send({ message: 'Thread ID and emails are required' });
+  }
+
+  // Validate thread ID format
+  if (!mongoose.Types.ObjectId.isValid(threadId)) {
+      return res.status(400).send({ message: 'Invalid thread ID' });
+  }
+
+  try {
+      // Find the user who owns the thread
+      const user = await User.findOne({ email });
+      if (!user) {
+          return res.status(404).send({ message: 'User not found' });
+      }
+
+      // Find the thread in the user's threads array
+      const thread = user.threads.id(threadId);
+      if (!thread) {
+          return res.status(404).send({ message: 'Thread not found' });
+      }
+
+      // Find the logged-in user by email to get their ObjectId
+      const loggedInUser = await User.findOne({ email: loggedInUserEmail });
+      if (!loggedInUser) {
+          return res.status(404).send({ message: 'Logged-in user not found' });
+      }
+
+      // Check if the user has already liked the thread
+      if (!thread.likes.includes(loggedInUser._id)) {
+          thread.likes.push(loggedInUser._id); // Push the ObjectId of the logged-in user
+          await user.save(); // Save the updated user document
+      }
+
+      return res.status(200).send({ message: 'Thread liked successfully', thread });
+  } catch (error) {
+      console.error('Error in like-thread route:', error);
+      return res.status(500).send({ message: 'Internal server error', error: error.message });
+  }
+});
+
+app.post('/dislike-thread', async (req, res) => {
+  const { threadId, email, loggedInUserEmail } = req.body;
+
+  // Validate required fields
+  if (!threadId || !email || !loggedInUserEmail) {
+      return res.status(400).send({ message: 'Thread ID and emails are required' });
+  }
+
+  // Validate thread ID format
+  if (!mongoose.Types.ObjectId.isValid(threadId)) {
+      return res.status(400).send({ message: 'Invalid thread ID' });
+  }
+
+  try {
+      // Find the user who owns the thread
+      const user = await User.findOne({ email });
+      if (!user) {
+          return res.status(404).send({ message: 'User not found' });
+      }
+
+      // Find the thread in the user's threads array
+      const thread = user.threads.id(threadId);
+      if (!thread) {
+          return res.status(404).send({ message: 'Thread not found' });
+      }
+
+      // Find the logged-in user by email to get their ObjectId
+      const loggedInUser = await User.findOne({ email: loggedInUserEmail });
+      if (!loggedInUser) {
+          return res.status(404).send({ message: 'Logged-in user not found' });
+      }
+
+      // Check if the user has already liked the thread
+      if (!thread.dislikes.includes(loggedInUser._id)) {
+          thread.dislikes.push(loggedInUser._id); // Push the ObjectId of the logged-in user
+          await user.save(); // Save the updated user document
+      }
+
+      return res.status(200).send({ message: 'Thread liked successfully', thread });
+  } catch (error) {
+      console.error('Error in like-thread route:', error);
+      return res.status(500).send({ message: 'Internal server error', error: error.message });
+  }
+});
+
+
 
 app.post('/change-password', async (req, res) => {
   const { email, newPassword } = req.body;

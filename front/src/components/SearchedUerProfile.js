@@ -11,6 +11,8 @@ const SearchedUserProfile = () => {
     const [error, setError] = useState(null);
     const [isFriend, setIsFriend] = useState(false); // State to track friend status
     const [searchedUserFriends, setSearchedUserFriends] = useState([]); // Store friends of the searched user
+    const [newReply, setNewReply] = useState(''); // For reply input
+    const [showAllReplies, setShowAllReplies] = useState(false); // State to track whether to show replies
 
     // Get the logged-in user's email from the Redux store
     const loggedInUserEmail = useSelector(state => state.login.email); 
@@ -78,6 +80,60 @@ const SearchedUserProfile = () => {
         }
     };
 
+    // Handle like (frontend only for now)
+    const handleLike = async (threadId) => {
+        console.log("Liking thread ID:", threadId);
+        console.log("Searched User Email:", email);
+        console.log("Logged In User Email:", loggedInUserEmail); // Display the logged-in user's email
+    
+        const requestData = {
+            threadId,
+            email,
+            loggedInUserEmail,
+        };
+        console.log("Request Data:", requestData); // Log the request data
+    
+        try {
+            const response = await axios.post('http://localhost:3001/like-thread', requestData);
+            console.log(response.data);
+        } catch (error) {
+            console.error('Error liking thread:', error.response ? error.response.data : error.message);
+        }
+    };
+
+    // Handle dislike (frontend only for now)
+    const handleDislike = async (threadId) => {
+        console.log("Disliking thread ID:", threadId);
+        console.log("Searched User Email:", email);
+        console.log("Logged In User Email:", loggedInUserEmail); // Display the logged-in user's email
+
+        const requestData = {
+            threadId,
+            email,
+            loggedInUserEmail,
+        };
+        console.log("Request Data:", requestData); // Log the request data
+
+        try {
+            const response = await axios.post('http://localhost:3001/dislike-thread', requestData);
+            console.log(response.data);
+        } catch (error) {
+            console.error('Error disliking thread:', error.response ? error.response.data : error.message);
+        }
+    };
+
+    // Handle reply (frontend only for now)
+    const handleReply = (threadId) => {
+        console.log(`Replying to thread with ID: ${threadId}, Reply: ${newReply}`);
+        setNewReply(''); // Clear reply input after submission
+        // You can later connect this to your backend API
+    };
+
+    // Toggle showing all replies for all threads
+    const toggleShowAllReplies = () => {
+        setShowAllReplies(prev => !prev);
+    };
+
     return (
         <div>
             <h2>User Threads</h2>
@@ -87,6 +143,40 @@ const SearchedUserProfile = () => {
                     <div key={index}>
                         <p>{thread.content}</p>
                         <p>Created At: {new Date(thread.createdAt).toLocaleString()}</p>
+                        <p>Likes: {thread.likes?.length || 0} | Dislikes: {thread.dislikes?.length || 0}</p>
+                        
+                        {/* Like and Dislike Buttons */}
+                        <button onClick={() => handleLike(thread._id)}>Like</button>
+                        <button onClick={() => handleDislike(thread._id)}>Dislike</button>
+                        
+                        {/* Reply Section */}
+                        <div>
+                            <input
+                                type="text"
+                                value={newReply}
+                                onChange={(e) => setNewReply(e.target.value)}
+                                placeholder="Type your reply..."
+                            />
+                            <button onClick={() => handleReply(thread._id)}>Reply</button>
+                        </div>
+                        
+                        {/* Display replies if available */}
+                        <div>
+                            <h4>Replies:</h4>
+                            <button onClick={toggleShowAllReplies}>
+                                {showAllReplies ? 'Hide All Replies' : 'View All Replies'}
+                            </button>
+                            {showAllReplies && thread.replies?.length > 0 ? (
+                                thread.replies.map((reply, replyIndex) => (
+                                    <div key={replyIndex}>
+                                        <p>{reply.content}</p>
+                                        <p>Replied At: {new Date(reply.createdAt).toLocaleString()}</p>
+                                    </div>
+                                ))
+                            ) : (
+                                <p>No replies yet.</p>
+                            )}
+                        </div>
                     </div>
                 ))
             ) : (
