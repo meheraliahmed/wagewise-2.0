@@ -404,7 +404,7 @@ app.post('/dislike-thread', async (req, res) => {
           return res.status(404).send({ message: 'Logged-in user not found' });
       }
 
-      // Check if the user has already liked the thread
+      // Check if the user has already liked the threada
       if (!thread.dislikes.includes(loggedInUser._id)) {
           thread.dislikes.push(loggedInUser._id); // Push the ObjectId of the logged-in user
           await user.save(); // Save the updated user document
@@ -418,7 +418,72 @@ app.post('/dislike-thread', async (req, res) => {
 });
 
 
+// Reply to a thread
+app.post('/reply-to-thread', async (req, res) => {
+  console.log('Received request to reply to thread');
 
+  // Log the incoming request body
+  console.log('Request Body:', req.body);
+
+  const { threadId, replyContent, replyingUserEmail } = req.body;
+
+  if (!threadId || !replyContent || !replyingUserEmail) {
+      console.log('Missing required fields in request body');
+      return res.status(400).json({ error: 'Missing required fields' });
+  }
+
+  try {
+      // Find the user who is replying
+      const user = await User.findOne({ email: replyingUserEmail });
+      if (!user) {
+          console.log('User not found for email:', replyingUserEmail);
+          return res.status(404).json({ error: 'User not found' });
+      }
+
+      // Find the thread by ID
+      const threadOwner = await User.findOne({ 'threads._id': threadId });
+      if (!threadOwner) {
+          console.log('Thread not found for ID:', threadId);
+          return res.status(404).json({ error: 'Thread not found' });
+      }
+
+      // Add the reply to the thread
+      const thread = threadOwner.threads.id(threadId);
+      thread.replies.push({
+          content: replyContent,
+          user: user._id, // Add the reply with reference to the user
+          createdAt: new Date(),
+      });
+
+      // Save the updated thread owner (which will save the thread)
+      await threadOwner.save();
+
+      // Log the successful reply
+      console.log('Reply added successfully');
+      res.status(200).json({ message: 'Reply added successfully' });
+  } catch (error) {
+      console.error('Error replying to thread:', error);
+      res.status(500).json({ error: 'Failed to reply to thread' });
+  }
+});
+app.get('/replies/:threadId', async (req, res) => {
+  const { threadId } = req.params;
+
+  try {
+      // Find the thread by its ID and populate the replies
+      const user = await User.findOne({ 'threads._id': threadId }, { 'threads.$': 1 });
+
+      if (!user || user.threads.length === 0) {
+          return res.status(404).json({ message: 'Thread not found' });
+      }
+
+      const thread = user.threads[0];
+      res.json(thread.replies); // Return the replies of the thread
+  } catch (error) {
+      console.error('Error fetching replies:', error);
+      res.status(500).json({ message: 'Error fetching replies' });
+  }
+});
 app.post('/change-password', async (req, res) => {
   const { email, newPassword } = req.body;
   const hashedPassword = bcrypt.hashSync(newPassword, 10);

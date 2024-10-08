@@ -12,7 +12,7 @@ const SearchedUserProfile = () => {
     const [isFriend, setIsFriend] = useState(false); // State to track friend status
     const [searchedUserFriends, setSearchedUserFriends] = useState([]); // Store friends of the searched user
     const [newReply, setNewReply] = useState(''); // For reply input
-    const [showAllReplies, setShowAllReplies] = useState(false); // State to track whether to show replies
+    const [repliesByThread, setRepliesByThread] = useState({}); // Track replies for each thread
 
     // Get the logged-in user's email from the Redux store
     const loggedInUserEmail = useSelector(state => state.login.email); 
@@ -122,16 +122,40 @@ const SearchedUserProfile = () => {
         }
     };
 
-    // Handle reply (frontend only for now)
-    const handleReply = (threadId) => {
+    // Handle reply
+    const handleReply = async (threadId) => {
         console.log(`Replying to thread with ID: ${threadId}, Reply: ${newReply}`);
-        setNewReply(''); // Clear reply input after submission
-        // You can later connect this to your backend API
+        
+        const requestData = {
+            threadId,
+            replyContent: newReply,
+            replyingUserEmail: loggedInUserEmail, // Send the logged-in user's email
+        };
+    
+        // Log the request data before sending it
+        console.log('Request Data:', requestData);
+    
+        try {
+            const response = await axios.post('http://localhost:3001/reply-to-thread', requestData);
+            console.log('Server response:', response.data);
+            setNewReply(''); // Clear reply input after successful submission
+        } catch (error) {
+            console.error('Error replying to thread:', error.response ? error.response.data : error.message);
+        }
     };
 
-    // Toggle showing all replies for all threads
-    const toggleShowAllReplies = () => {
-        setShowAllReplies(prev => !prev);
+    // Fetch replies for a thread
+    const fetchReplies = async (threadId) => {
+        try {
+            const response = await axios.get(`http://localhost:3001/replies/${threadId}`);
+            console.log('Fetched replies:', response.data);
+            setRepliesByThread(prevReplies => ({
+                ...prevReplies,
+                [threadId]: response.data, // Store the replies for the specific thread
+            }));
+        } catch (error) {
+            console.error('Error fetching replies:', error);
+        }
     };
 
     return (
@@ -163,11 +187,11 @@ const SearchedUserProfile = () => {
                         {/* Display replies if available */}
                         <div>
                             <h4>Replies:</h4>
-                            <button onClick={toggleShowAllReplies}>
-                                {showAllReplies ? 'Hide All Replies' : 'View All Replies'}
+                            <button onClick={() => fetchReplies(thread._id)}>
+                                {repliesByThread[thread._id] ? 'Hide Replies' : 'View All Replies'}
                             </button>
-                            {showAllReplies && thread.replies?.length > 0 ? (
-                                thread.replies.map((reply, replyIndex) => (
+                            {repliesByThread[thread._id] && repliesByThread[thread._id].length > 0 ? (
+                                repliesByThread[thread._id].map((reply, replyIndex) => (
                                     <div key={replyIndex}>
                                         <p>{reply.content}</p>
                                         <p>Replied At: {new Date(reply.createdAt).toLocaleString()}</p>
